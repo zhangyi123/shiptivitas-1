@@ -20,6 +20,37 @@ export default class Board extends React.Component {
       inProgress: React.createRef(),
       complete: React.createRef(),
     }
+    this.drag = this.drag.bind(this);
+  }
+  drag() {
+    let options = {};
+    let containers =[];
+    containers.push(this.swimlanes.backlog.current);
+    containers.push(this.swimlanes.inProgress.current);
+    containers.push(this.swimlanes.complete.current);
+
+    let drake = Dragula(containers, options);
+    drake.on('drop',(el, target, source, sibling) => {
+      let targetStatus = target.previousSibling.innerText;
+      if(targetStatus=="Backlog"){
+        el.className = el.className.replace('Card-grey','Card-grey');
+        el.className = el.className.replace('Card-green','Card-grey');
+        el.className = el.className.replace('Card-blue','Card-grey');
+      }
+       else if(targetStatus=="Complete"){
+        el.className = el.className.replace('Card-grey','Card-green');
+         el.className = el.className.replace('Card-green','Card-green');
+         el.className = el.className.replace('Card-blue','Card-green');
+       }else{
+         el.className = el.className.replace('Card-grey','Card-blue');
+         el.className = el.className.replace('Card-green','Card-blue');
+         el.className = el.className.replace('Card-blue','Card-blue');
+       }
+
+    })
+  }
+  componentDidMount() {
+    this.drag();
   }
   getClients() {
     return [
